@@ -5,7 +5,10 @@ SELECT department_name,avg(salary) from employees  GROUP BY department_name;
 
 SELECT department_name,avg(salary) from employees  GROUP BY department_name;
 
+
 SELECT * from  dept_avg_salary ;
+
+
 
 CREATE VIEW test_view
 as
