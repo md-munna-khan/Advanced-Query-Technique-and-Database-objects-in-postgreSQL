@@ -54,7 +54,21 @@ SELECT * from employees WHERE  salary > (SELECT max(salary) from employees WHERE
 -- Can return a single column
 
 
--- we used in
-SELECT 
-FROM
-where
+-- when we used select in sub Query and  we must be know select always return single values
+
+SELECT *,(SELECT sum(salary) from employees) from employees
+
+
+-- from use
+SELECT department_name,sum(salary) from employees GROUP BY department_name;
+SELECT * FROM -- main query 
+(SELECT department_name,sum(salary) from employees GROUP BY department_name) as sum_dept; -- sub query
+
+
+--- where 
+SELECT * from employees WHERE  salary > (SELECT max(salary) from employees WHERE department_name='HR');
+
+SELECT employee_name, salary, department_name 
+FROM employees 
+WHERE department_name in 
+(SELECT department_name FROM employees WHERE department_name LIKE '%R%');
