@@ -40,6 +40,7 @@ INSERT INTO employees (employee_name, department_name, salary, hire_date) VALUES
     ('Mia Roberts', 'Quality Assurance', 70000.25, '2021-11-20');
 
 SELECT * from employees;
+
 DROP Table employees;
 -- Retrieve all employees whose salary is greater than the highest salary of the HR department
 --63000
