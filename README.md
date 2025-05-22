@@ -55,3 +55,32 @@ FROM employees
 WHERE department_name in 
 (SELECT department_name FROM employees WHERE department_name LIKE '%R%');
 ```
+## 10-4 Exploring Views in PostgreSQL
+
+- any complex query easily we called the create view and not need many time write same query just select view query name
+
+=========== Benefit use view=======
+-- Simplifying complex queries
+-- Improved security
+-- Enhanced data abstraction
+![alt text](image-4.png)
+
+```sql
+CREATE View dept_avg_salary
+AS
+SELECT department_name,avg(salary) from employees  GROUP BY department_name;
+
+
+SELECT department_name,avg(salary) from employees  GROUP BY department_name;
+
+SELECT * from  dept_avg_salary ;
+
+CREATE VIEW test_view
+as
+SELECT employee_name, salary, department_name 
+FROM employees 
+WHERE department_name in 
+(SELECT department_name FROM employees WHERE department_name LIKE '%R%');
+
+SELECT * from test_view;
+```
