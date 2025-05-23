@@ -139,3 +139,42 @@ $$;
 SELECT delete_emp_by_id(29); --- send peramiter
 SELECT * from employees;
 ```
+
+
+## 10-6 Exploring Stored Procedure in PostgreSQL
+ - What is PL/pgSQL?
+PL/pgSQL (Procedural Language/PostgreSQL) is a procedural programming language supported by PostgreSQL. It allows you to write functions, stored procedures, triggers, and control-flow logic (like IF, LOOP, etc.) alongside regular SQL.
+
+```sql
+
+--- use procedure
+CREATE Procedure remove_emp()
+LANGUAGE plpgsql
+as 
+$$
+DECLARE
+test_var int;
+BEGIN
+SELECT employee_id INTO test_var from employees WHERE employee_id=25;
+DELETE from employees WHERE employee_id= test_var ;
+end
+$$;
+
+
+CALL remove_emp()
+
+CREATE Procedure remove_emp_id(P_remove_id int)
+LANGUAGE plpgsql
+as 
+$$
+DECLARE
+test_var int;
+BEGIN
+SELECT employee_id INTO test_var from employees WHERE employee_id= P_remove_id;
+DELETE from employees WHERE employee_id= test_var ;
+end
+$$;
+
+DROP PROCEDURE remove_emp_id;
+CALL remove_emp_id(20); 
+```

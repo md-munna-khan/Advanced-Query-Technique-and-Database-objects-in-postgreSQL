@@ -47,3 +47,34 @@ DELETE FROM employees where employee_id=(p_by_id);
 $$;
 SELECT delete_emp_by_id(27);
 SELECT * from employees;
+
+--- use procedure
+CREATE Procedure remove_emp()
+LANGUAGE plpgsql
+as 
+$$
+DECLARE
+test_var int;
+BEGIN
+SELECT employee_id INTO test_var from employees WHERE employee_id=25;
+DELETE from employees WHERE employee_id= test_var ;
+end
+$$;
+
+
+CALL remove_emp()
+
+CREATE Procedure remove_emp_id(P_remove_id int)
+LANGUAGE plpgsql
+as 
+$$
+DECLARE
+test_var int;
+BEGIN
+SELECT employee_id INTO test_var from employees WHERE employee_id= P_remove_id;
+DELETE from employees WHERE employee_id= test_var ;
+end
+$$;
+
+DROP PROCEDURE remove_emp_id;
+CALL remove_emp_id(20); 
