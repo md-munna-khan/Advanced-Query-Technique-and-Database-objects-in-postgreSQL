@@ -235,3 +235,37 @@ EXECUTE FUNCTION save_deleted_user();
 
 DELETE from my_users WHERE user_name = 'Mir';
 ```
+## 10-9 Understanding How Indexing Works in PostgreSQL.
+🔍 What is an Index in PostgreSQL?
+An index is a special data structure that improves the speed of data retrieval from a database table. Think of it like an index in a book — instead of scanning every page, you can quickly jump to the right one.
+
+✅ Why Use Indexes?
+Speed up SELECT queries (especially with WHERE, JOIN, ORDER BY)
+
+Improve performance of searches and filters
+
+Help enforce uniqueness (using UNIQUE INDEX)
+
+Used automatically by PostgreSQL when it decides it will help
+
+| Index Type           | Use Case                                                        |
+| -------------------- | --------------------------------------------------------------- |
+| `B-TREE` *(default)* | Good for most queries with `=`, `<`, `>`, `BETWEEN`, `ORDER BY` |
+| `HASH`               | Faster for equality checks, but limited use                     |
+| `GIN`                | For array, JSONB, or full-text search                           |
+| `GiST`               | Good for geometric or range-based queries                       |
+| `BRIN`               | Large tables with sequential/physical ordering                  |
+| `UNIQUE`             | Ensures no duplicate values                                     |
+
+
+```sql
+SELECT * from  employees;
+
+EXPLAIN ANALYSE
+SELECT * from employees WHERE department_name ='HR';
+
+CREATE INDEX idx_employees_department_name
+on employees (department_name);
+
+SHOW data_directory;
+```
