@@ -139,3 +139,133 @@ $$;
 SELECT delete_emp_by_id(29); --- send peramiter
 SELECT * from employees;
 ```
+
+
+## 10-6 Exploring Stored Procedure in PostgreSQL
+ - What is PL/pgSQL?
+PL/pgSQL (Procedural Language/PostgreSQL) is a procedural programming language supported by PostgreSQL. It allows you to write functions, stored procedures, triggers, and control-flow logic (like IF, LOOP, etc.) alongside regular SQL.
+
+```sql
+
+--- use procedure
+CREATE Procedure remove_emp()
+LANGUAGE plpgsql
+as 
+$$
+DECLARE
+test_var int;
+BEGIN
+SELECT employee_id INTO test_var from employees WHERE employee_id=25;
+DELETE from employees WHERE employee_id= test_var ;
+end
+$$;
+
+
+CALL remove_emp()
+
+CREATE Procedure remove_emp_id(P_remove_id int)
+LANGUAGE plpgsql
+as 
+$$
+DECLARE
+test_var int;
+BEGIN
+SELECT employee_id INTO test_var from employees WHERE employee_id= P_remove_id;
+DELETE from employees WHERE employee_id= test_var ;
+end
+$$;
+
+DROP PROCEDURE remove_emp_id;
+CALL remove_emp_id(20); 
+```
+
+## 10-7 Practical Implementation of Triggers in PostgreSQL
+
+```sql 
+-- Table-Level Events:
+    -- INSERT, UPDATE, DELETE, TRUNCATE
+-- Database-Level Events
+    -- Database Startup, Database Shutdown, Connection start and end etc
+
+-- CREATE TRIGGER trigger_name
+-- {BEFORE | AFTER | INSTEAD OF} {INSERT | UPDATE | DELETE | TRUNCATE}
+-- ON table_name
+-- [FOR EACH ROW] 
+-- EXECUTE FUNCTION function_name();
+
+
+
+CREATE Table my_users
+(
+    user_name VARCHAR(50),
+    email VARCHAR(100)
+);
+
+INSERT INTO my_users VALUES('Mezba', 'mezba@mail.com'), ('Mir', 'mir@mail.com');
+
+SELECT * from my_users;
+SELECT * from deleted_users_audit;
+
+CREATE Table deleted_users_audit
+(
+    deleted_user_name VARCHAR(50),
+    deletedAt TIMESTAMP
+);
+
+SELECT * FROM deleted_users_audit;
+
+-- trigger
+CREATE or REPLACE FUNCTION save_deleted_user()
+RETURNS TRIGGER
+LANGUAGE plpgsql
+as 
+$$
+BEGIN
+INSERT INTO deleted_users_audit VALUES (OLD.user_name,now());
+   RAISE NOTICE 'Deleted user audit log created';
+   RETURN OLD;
+END
+$$
+
+CREATE or REPLACE TRIGGER save_deleted_user_trigger
+BEFORE DELETE
+on my_users
+for EACH row 
+EXECUTE FUNCTION save_deleted_user();
+
+DELETE from my_users WHERE user_name = 'Mir';
+```
+## 10-9 Understanding How Indexing Works in PostgreSQL.
+🔍 What is an Index in PostgreSQL?
+An index is a special data structure that improves the speed of data retrieval from a database table. Think of it like an index in a book — instead of scanning every page, you can quickly jump to the right one.
+
+✅ Why Use Indexes?
+Speed up SELECT queries (especially with WHERE, JOIN, ORDER BY)
+
+Improve performance of searches and filters
+
+Help enforce uniqueness (using UNIQUE INDEX)
+
+Used automatically by PostgreSQL when it decides it will help
+
+| Index Type           | Use Case                                                        |
+| -------------------- | --------------------------------------------------------------- |
+| `B-TREE` *(default)* | Good for most queries with `=`, `<`, `>`, `BETWEEN`, `ORDER BY` |
+| `HASH`               | Faster for equality checks, but limited use                     |
+| `GIN`                | For array, JSONB, or full-text search                           |
+| `GiST`               | Good for geometric or range-based queries                       |
+| `BRIN`               | Large tables with sequential/physical ordering                  |
+| `UNIQUE`             | Ensures no duplicate values                                     |
+
+
+```sql
+SELECT * from  employees;
+
+EXPLAIN ANALYSE
+SELECT * from employees WHERE department_name ='HR';
+
+CREATE INDEX idx_employees_department_name
+on employees (department_name);
+
+SHOW data_directory;
+```
